@@ -168,7 +168,7 @@ impl Rate {
         self.end_of_app_limited != 0
     }
 
-    pub fn _delivered(&self) -> usize {
+    pub fn delivered(&self) -> usize {
         self.delivered
     }
 
@@ -176,11 +176,11 @@ impl Rate {
         self.rate_sample.delivery_rate
     }
 
-    pub fn _sample_rtt(&self) -> Duration {
+    pub fn sample_rtt(&self) -> Duration {
         self.rate_sample.rtt
     }
 
-    pub fn _sample_is_app_limited(&self) -> bool {
+    pub fn sample_is_app_limited(&self) -> bool {
         self.rate_sample.is_app_limited
     }
 }
@@ -273,7 +273,7 @@ mod tests {
         r.delivery_rate.generate_rate_sample(rtt);
 
         // Bytes acked so far.
-        assert_eq!(r.delivery_rate._delivered(), 2400);
+        assert_eq!(r.delivery_rate.delivered(), 2400);
 
         // Estimated delivery rate = (1200 x 2) / 0.5s = 48000.
         assert_eq!(r.delivery_rate(), 48000);
@@ -315,7 +315,7 @@ mod tests {
         }
 
         assert_eq!(r.app_limited(), false);
-        assert_eq!(r.delivery_rate._sample_is_app_limited(), false);
+        assert_eq!(r.delivery_rate.sample_is_app_limited(), false);
     }
 
     #[test]
@@ -373,7 +373,7 @@ mod tests {
 
         assert_eq!(r.app_limited(), true);
         // rate sample is not app limited (all acked).
-        assert_eq!(r.delivery_rate._sample_is_app_limited(), false);
-        assert_eq!(r.delivery_rate._sample_rtt(), rtt);
+        assert_eq!(r.delivery_rate.sample_is_app_limited(), false);
+        assert_eq!(r.delivery_rate.sample_rtt(), rtt);
     }
 }

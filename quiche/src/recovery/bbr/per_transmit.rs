@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2019, Cloudflare, Inc.
+// Copyright (C) 2022, Cloudflare, Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -24,62 +24,22 @@
 // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-pub fn rand_bytes(buf: &mut [u8]) {
-    unsafe {
-        RAND_bytes(buf.as_mut_ptr(), buf.len());
+use super::*;
+use crate::recovery::Recovery;
+
+// BBR Functions when trasmitting packets.
+//
+pub fn bbr_on_transmit(r: &mut Recovery) {
+    bbr_handle_restart_from_idle(r);
+}
+
+// 4.3.4.4.  Restarting From Idle
+fn bbr_handle_restart_from_idle(r: &mut Recovery) {
+    if r.bytes_in_flight == 0 && r.delivery_rate.app_limited() {
+        r.bbr_state.idle_restart = true;
+
+        if r.bbr_state.state == BBRStateMachine::ProbeBW {
+            pacing::bbr_set_pacing_rate_with_gain(r, 1.0);
+        }
     }
-}
-
-pub fn rand_u8() -> u8 {
-    let mut buf = [0; 1];
-
-    rand_bytes(&mut buf);
-
-    buf[0]
-}
-
-pub fn rand_u64() -> u64 {
-    let mut buf = [0; 8];
-
-    rand_bytes(&mut buf);
-
-    u64::from_ne_bytes(buf)
-}
-
-pub fn rand_usize() -> usize {
-    let mut buf = [0; usize::BITS as usize / 8];
-
-    rand_bytes(&mut buf);
-
-    usize::from_ne_bytes(buf)
-}
-
-pub fn rand_u64_uniform(max: u64) -> u64 {
-    let chunk_size = u64::max_value() / max;
-    let end_of_last_chunk = chunk_size * max;
-
-    let mut r = rand_u64();
-
-    while r >= end_of_last_chunk {
-        r = rand_u64();
-    }
-
-    r / chunk_size
-}
-
-pub fn rand_usize_uniform(max: usize) -> usize {
-    let chunk_size = usize::max_value() / max;
-    let end_of_last_chunk = chunk_size * max;
-
-    let mut r = rand_usize();
-
-    while r >= end_of_last_chunk {
-        r = rand_usize();
-    }
-
-    r / chunk_size
-}
-
-extern {
-    fn RAND_bytes(buf: *mut u8, len: libc::size_t) -> libc::c_int;
 }
