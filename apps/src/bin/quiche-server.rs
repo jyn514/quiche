@@ -611,7 +611,7 @@ fn set_txtime_sockopt(sock: &net::UdpSocket) -> io::Result<()> {
     use nix::sys::socket::sockopt::TxTime;
     use std::os::unix::io::AsRawFd;
 
-    let config = libc::sock_txtime {
+    let config = nix::libc::sock_txtime {
         clockid: libc::CLOCK_MONOTONIC,
         flags: 0,
     };
@@ -637,7 +637,7 @@ fn set_txtime_sockopt(_: &net::UdpSocket) -> io::Result<()> {
 /// sendmsg syscall also includes the time the packet needs to be
 /// sent by the kernel in msghdr.
 ///
-/// Note that sendmsg syscal is used only on linux platforms.
+/// Note that sendmsg syscall is used only on linux platforms.
 #[cfg(target_os = "linux")]
 fn send_to(
     sock: &mio::net::UdpSocket, send_buf: &[u8], send_info: &quiche::SendInfo,
