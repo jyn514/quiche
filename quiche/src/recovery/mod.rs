@@ -293,8 +293,6 @@ impl Recovery {
             self.set_loss_detection_timer(handshake_status, now);
         }
 
-        self.sent[epoch].push_back(pkt);
-
         // HyStart++: Start of the round in a slow start.
         if self.hystart.enabled() &&
             epoch == packet::EPOCH_APPLICATION &&
@@ -315,6 +313,10 @@ impl Recovery {
         }
 
         self.schedule_next_packet(epoch, now, sent_bytes);
+
+        pkt.time_sent = self.get_packet_send_time();
+
+        self.sent[epoch].push_back(pkt);
 
         self.bytes_sent += sent_bytes;
         trace!("{} {:?}", trace_id, self);
