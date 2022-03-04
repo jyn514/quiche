@@ -178,7 +178,7 @@ impl Default for CommonArgs {
             early_data: false,
             dump_packet_path: None,
             no_grease: false,
-            cc_algorithm: "cubic".to_string(),
+            cc_algorithm: "bbr".to_string(),
             disable_hystart: false,
             dgrams_enabled: false,
             dgram_count: 0,
@@ -214,7 +214,7 @@ Options:
   --connect-to ADDRESS     Override ther server's address.
   --no-verify              Don't verify server's certificate.
   --no-grease              Don't send GREASE.
-  --cc-algorithm NAME      Specify which congestion control algorithm to use [default: cubic].
+  --cc-algorithm NAME      Specify which congestion control algorithm to use [default: bbr].
   --disable-hystart        Disable HyStart++.
   -H --header HEADER ...   Add a request header.
   -n --requests REQUESTS   Send the given number of identical requests [default: 1].
@@ -358,7 +358,7 @@ Options:
   --dgram-proto PROTO         DATAGRAM application protocol to use [default: none].
   --dgram-count COUNT         Number of DATAGRAMs to send [default: 0].
   --dgram-data DATA           Data to send for certain types of DATAGRAM application protocol [default: brrr].
-  --cc-algorithm NAME         Specify which congestion control algorithm to use [default: cubic].
+  --cc-algorithm NAME         Specify which congestion control algorithm to use [default: bbr].
   --disable-hystart           Disable HyStart++.
   -h --help                   Show this screen.
 ";

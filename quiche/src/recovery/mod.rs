@@ -981,9 +981,9 @@ impl Recovery {
 pub enum CongestionControlAlgorithm {
     /// Reno congestion control algorithm. `reno` in a string form.
     Reno  = 0,
-    /// CUBIC congestion control algorithm (default). `cubic` in a string form.
+    /// CUBIC congestion control algorithm. `cubic` in a string form.
     CUBIC = 1,
-    /// BBR congestion control algorithm. `bbr` in a string form.
+    /// BBR congestion control algorithm (default). `bbr` in a string form.
     BBR   = 2,
 }
 

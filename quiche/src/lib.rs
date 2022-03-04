@@ -661,7 +661,7 @@ impl Config {
             tls_ctx,
             application_protos: Vec::new(),
             grease: true,
-            cc_algorithm: CongestionControlAlgorithm::CUBIC,
+            cc_algorithm: CongestionControlAlgorithm::BBR,
             hystart: true,
 
             dgram_recv_max_queue_len: DEFAULT_MAX_DGRAM_QUEUE_LEN,
@@ -967,7 +967,7 @@ impl Config {
 
     /// Sets the congestion control algorithm used.
     ///
-    /// The default value is `CongestionControlAlgorithm::CUBIC`.
+    /// The default value is `CongestionControlAlgorithm::BBR`.
     pub fn set_cc_algorithm(&mut self, algo: CongestionControlAlgorithm) {
         self.cc_algorithm = algo;
     }
@@ -6143,6 +6143,7 @@ pub mod testing {
             config.set_initial_max_streams_bidi(3);
             config.set_initial_max_streams_uni(3);
             config.set_ack_delay_exponent(8);
+            config.set_cc_algorithm(CongestionControlAlgorithm::Reno);
 
             Ok(Pipe {
                 client: connect(
@@ -11189,6 +11190,7 @@ mod tests {
             .unwrap();
         // Larger than the client
         server_config.set_max_send_udp_payload_size(1500);
+        server_config.set_cc_algorithm(CongestionControlAlgorithm::Reno);
 
         let mut pipe = testing::Pipe {
             client: connect(
@@ -11234,6 +11236,7 @@ mod tests {
         config.set_initial_max_stream_data_bidi_remote(10000);
         config.set_initial_max_streams_bidi(10);
         config.verify_peer(false);
+        config.set_cc_algorithm(CongestionControlAlgorithm::Reno);
 
         let mut pipe = testing::Pipe::with_config(&mut config).unwrap();
         assert_eq!(pipe.handshake(), Ok(()));
